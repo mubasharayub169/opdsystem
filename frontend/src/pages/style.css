@@ -1,0 +1,9 @@
+h1.header {
+    color: rgb(120, 45, 150);
+    align-content: center;
+    text-align: center;
+}
+p.first-paragraph {
+    text-align: center;
+    color: brown;
+}
