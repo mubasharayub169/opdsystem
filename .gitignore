@@ -1,0 +1,24 @@
+# Dependencies (Heavy folders jo server par install hote hain)
+node_modules/
+
+# Build files (React ka build folder)
+dist/
+build/
+
+# Environment Variables (SABSE ZAROORI - Isme passwords hote hain)
+.env
+.env.local
+.env.production
+.env.development
+
+# Logs (Error files)
+*.log
+npm-debug.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
