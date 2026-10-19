@@ -3,6 +3,8 @@ import cors from 'cors';
 import http from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import './db.js';
 import authRoutes from './routes/auth.js';
 import doctorsRoutes from './routes/doctors.js';
@@ -12,6 +14,10 @@ import doctorRoutes from './routes/doctor.js';
 import medicinesRoutes from './routes/medicines.js';
 
 dotenv.config();
+
+// Setup __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
@@ -27,7 +33,7 @@ app.use((req, res, next) => {
 });
 
 // ============================================================
-// ROUTES
+// API ROUTES
 // ============================================================
 app.use('/api/auth', authRoutes);
 app.use('/api/admin/doctors', doctorsRoutes);
@@ -35,17 +41,6 @@ app.use('/api/admin/receptionists', receptionistsRoutes);
 app.use('/api/admin/medicines', medicinesRoutes);
 app.use('/api/staff', receptionistRoutes);
 app.use('/api/doctor', doctorRoutes);
-
-// ============================================================
-// HEALTH CHECK
-// ============================================================
-app.get('/', (req, res) => {
-  res.json({
-    ok: true,
-    service: 'Hospital OPD API',
-    time: new Date().toISOString()
-  });
-});
 
 // ============================================================
 // ADMIN STATS
@@ -97,6 +92,22 @@ app.get('/api/test-db', async (req, res) => {
     res.json({ ok: true, doctors: rows });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// ============================================================
+// SERVE FRONTEND (React Build)
+// ============================================================
+// Ye line batati hai ke 'public' folder ki static files (HTML, CSS, JS) serve karo
+app.use(express.static(path.join(__dirname, '../public')));
+
+// SPA Fallback: Agar koi /api route na ho, to index.html bhejo (React Router handle karega)
+app.get('*', (req, res) => {
+  // Agar request API ke liye nahi hai, to frontend index.html bhejo
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  } else {
+    res.status(404).json({ error: 'API route not found' });
   }
 });
 
