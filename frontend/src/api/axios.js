@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -27,7 +27,6 @@ api.interceptors.response.use(
     const url = error.config?.url || '';
     
     // ⚠️ Login endpoints par redirect NAHI karna
-    // Warna galat credentials par user admin login par chala jayega
     const isLoginEndpoint = url.includes('/login');
     
     if (error.response?.status === 401 && !isLoginEndpoint) {
