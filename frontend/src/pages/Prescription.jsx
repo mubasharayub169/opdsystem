@@ -370,22 +370,23 @@ export default function Prescription() {
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-6 py-3.5 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 lg:px-6 py-3.5 flex items-center justify-between">
           <button
             onClick={() => navigate('/doctor')}
             className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 font-medium text-sm transition"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Queue
+            <span className="hidden sm:inline">Back to Queue</span>
+            <span className="sm:hidden">Back</span>
           </button>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowTemplates(true)}
-              className="inline-flex items-center gap-1.5 bg-white hover:bg-medical-50 border border-slate-200 hover:border-medical-300 text-slate-700 hover:text-medical-700 px-3 py-2 rounded-lg text-xs font-semibold transition"
+              className="inline-flex items-center gap-1.5 bg-white hover:bg-medical-50 border border-slate-200 hover:border-medical-300 text-slate-700 hover:text-medical-700 px-2.5 lg:px-3 py-2 rounded-lg text-xs font-semibold transition"
             >
               <BookOpen className="w-3.5 h-3.5" />
-              Templates
+              <span className="hidden sm:inline">Templates</span>
               {templates.length > 0 && (
                 <span className="bg-medical-100 text-medical-700 text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[16px] text-center">
                   {templates.length}
@@ -395,23 +396,23 @@ export default function Prescription() {
 
             <button
               onClick={() => setShowSaveTemplate(true)}
-              className="inline-flex items-center gap-1.5 bg-white hover:bg-medical-50 border border-slate-200 hover:border-medical-300 text-slate-700 hover:text-medical-700 px-3 py-2 rounded-lg text-xs font-semibold transition"
+              className="hidden lg:inline-flex items-center gap-1.5 bg-white hover:bg-medical-50 border border-slate-200 hover:border-medical-300 text-slate-700 hover:text-medical-700 px-3 py-2 rounded-lg text-xs font-semibold transition"
             >
               <BookmarkPlus className="w-3.5 h-3.5" />
-              Save as Template
+              Save Template
             </button>
 
             <button
               onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 bg-white hover:bg-medical-50 border border-slate-200 hover:border-medical-300 text-slate-700 hover:text-medical-700 px-3 py-2 rounded-lg text-xs font-semibold transition"
+              className="inline-flex items-center gap-1.5 bg-white hover:bg-medical-50 border border-slate-200 hover:border-medical-300 text-slate-700 hover:text-medical-700 px-2.5 lg:px-3 py-2 rounded-lg text-xs font-semibold transition"
             >
               <Printer className="w-3.5 h-3.5" />
-              Print
+              <span className="hidden sm:inline">Print</span>
             </button>
 
-            <div className="w-px h-6 bg-slate-200 mx-1"></div>
+            <div className="w-px h-6 bg-slate-200 mx-1 hidden lg:block"></div>
 
-            <div className="text-right hidden sm:block">
+            <div className="text-right hidden lg:block">
               <p className="text-xs font-semibold text-slate-800">{user?.name}</p>
               <p className="text-[11px] text-slate-500">{user?.specialization}</p>
             </div>
@@ -422,20 +423,20 @@ export default function Prescription() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-6 space-y-4">
+      <main className="max-w-6xl mx-auto px-4 lg:px-6 py-6 space-y-4">
 
         {/* Patient Header */}
-        <div className="bg-gradient-to-r from-medical-700 via-medical-600 to-medical-700 rounded-xl p-6 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-medical-700 via-medical-600 to-medical-700 rounded-xl p-4 lg:p-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
 
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-white/10 backdrop-blur rounded-xl flex flex-col items-center justify-center text-white font-bold border border-white/20 flex-shrink-0">
-                <span className="text-[10px] opacity-80 uppercase tracking-wider">Token</span>
-                <span className="text-2xl font-mono leading-none">{visit.token_no}</span>
+              <div className="w-14 h-14 lg:w-16 lg:h-16 bg-white/10 backdrop-blur rounded-xl flex flex-col items-center justify-center text-white font-bold border border-white/20 flex-shrink-0">
+                <span className="text-[9px] lg:text-[10px] opacity-80 uppercase tracking-wider">Token</span>
+                <span className="text-xl lg:text-2xl font-mono leading-none">{visit.token_no}</span>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-white">{visit.patient_name}</h2>
+                <h2 className="text-lg lg:text-xl font-bold text-white">{visit.patient_name}</h2>
                 <p className="text-medical-100 text-xs mt-1">
                   MR: <span className="font-mono font-semibold">{visit.mr_no}</span>
                   {visit.age && ` · ${visit.age}Y`}
@@ -447,7 +448,7 @@ export default function Prescription() {
 
             <button
               onClick={loadHistory}
-              className="inline-flex items-center gap-2 bg-white/10 backdrop-blur hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-lg font-medium text-xs transition"
+              className="w-full lg:w-auto inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-lg font-medium text-xs transition"
             >
               <History className="w-3.5 h-3.5" />
               View History
@@ -474,7 +475,7 @@ export default function Prescription() {
         )}
 
         {/* Vitals */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <div className="bg-white rounded-xl border border-slate-200 p-4 lg:p-5">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-8 h-8 bg-medical-50 rounded-lg flex items-center justify-center">
               <HeartPulse className="w-4 h-4 text-medical-600" />
@@ -485,7 +486,7 @@ export default function Prescription() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
             {[
               { key: 'bp', label: 'Blood Pressure', ph: '120/80', unit: 'mmHg' },
               { key: 'pulse', label: 'Pulse', ph: '72', unit: 'bpm' },
@@ -493,7 +494,7 @@ export default function Prescription() {
               { key: 'weight', label: 'Weight', ph: '70', unit: 'kg' },
               { key: 'spo2', label: 'SpO₂', ph: '98', unit: '%' }
             ].map((v) => (
-              <div key={v.key}>
+              <div key={v.key} className={v.key === 'spo2' ? 'col-span-2 lg:col-span-1' : ''}>
                 <label className="block text-[10px] font-bold text-slate-600 mb-1.5 uppercase tracking-wide">
                   {v.label}
                 </label>
@@ -515,7 +516,7 @@ export default function Prescription() {
         </div>
 
         {/* Clinical Notes */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <div className="bg-white rounded-xl border border-slate-200 p-4 lg:p-5">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-8 h-8 bg-medical-50 rounded-lg flex items-center justify-center">
               <FileText className="w-4 h-4 text-medical-600" />
@@ -526,13 +527,13 @@ export default function Prescription() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">
                 Chief Complaints
               </label>
               <textarea
-                rows={4}
+                rows={3}
                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 focus:bg-white transition text-sm resize-none"
                 placeholder="Patient's chief complaints..."
                 value={form.complaints}
@@ -544,7 +545,7 @@ export default function Prescription() {
                 Diagnosis
               </label>
               <textarea
-                rows={4}
+                rows={3}
                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 focus:bg-white transition text-sm resize-none"
                 placeholder="Medical diagnosis..."
                 value={form.diagnosis}
@@ -555,7 +556,7 @@ export default function Prescription() {
         </div>
 
         {/* Medicines */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5 relative z-20">
+        <div className="bg-white rounded-xl border border-slate-200 p-4 lg:p-5 relative z-20">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-medical-50 rounded-lg flex items-center justify-center">
@@ -571,11 +572,12 @@ export default function Prescription() {
               className="inline-flex items-center gap-1.5 bg-medical-600 hover:bg-medical-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition shadow-sm"
             >
               <Plus className="w-3.5 h-3.5" />
-              Add Medicine
+              <span className="hidden sm:inline">Add Medicine</span>
+              <span className="sm:hidden">Add</span>
             </button>
           </div>
 
-          <div className="hidden md:grid grid-cols-12 gap-2 mb-2 px-1">
+          <div className="hidden lg:grid grid-cols-12 gap-2 mb-2 px-1">
             <div className="col-span-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">#</div>
             <div className="col-span-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Medicine</div>
             <div className="col-span-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Dosage</div>
@@ -584,15 +586,15 @@ export default function Prescription() {
             <div className="col-span-1"></div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3 lg:space-y-2">
             {medicines.map((m, i) => (
-              <div key={i} className="grid grid-cols-12 gap-2 items-start">
-                <div className="col-span-1 flex items-center justify-center h-10 text-slate-400 font-mono text-xs font-bold">
+              <div key={i} className="grid grid-cols-12 gap-2 items-start p-3 lg:p-0 bg-slate-50 lg:bg-transparent rounded-lg lg:rounded-none mb-2 lg:mb-0 border border-slate-100 lg:border-none">
+                <div className="hidden lg:flex col-span-1 items-center justify-center h-10 text-slate-400 font-mono text-xs font-bold">
                   {String(i + 1).padStart(2, '0')}
                 </div>
                 
-                {/* Medicine Autocomplete with Relative z-index */}
-                <div className="col-span-11 md:col-span-4 relative z-[100]">
+                <div className="col-span-12 lg:col-span-4 relative z-[100]">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase lg:hidden mb-1">Medicine</label>
                   <MedicineAutocomplete
                     value={m.medicine_name}
                     onChange={(val) => updateMed(i, 'medicine_name', val)}
@@ -600,40 +602,44 @@ export default function Prescription() {
                   />
                 </div>
 
-                <div className="col-span-4 md:col-span-2">
+                <div className="col-span-6 lg:col-span-2">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase lg:hidden mb-1">Dosage</label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 focus:bg-white transition text-sm text-center font-mono"
+                    className="w-full px-3 py-2.5 bg-white lg:bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 transition text-sm text-center font-mono"
                     placeholder="1+0+1"
                     value={m.dosage}
                     onChange={(e) => updateMed(i, 'dosage', e.target.value)}
                   />
                 </div>
-                <div className="col-span-4 md:col-span-2">
+                <div className="col-span-6 lg:col-span-2">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase lg:hidden mb-1">Duration</label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 focus:bg-white transition text-sm"
+                    className="w-full px-3 py-2.5 bg-white lg:bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 transition text-sm"
                     placeholder="5 days"
                     value={m.duration}
                     onChange={(e) => updateMed(i, 'duration', e.target.value)}
                   />
                 </div>
-                <div className="col-span-3 md:col-span-2">
+                <div className="col-span-12 lg:col-span-2 mt-2 lg:mt-0">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase lg:hidden mb-1">Instructions</label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 focus:bg-white transition text-sm"
+                    className="w-full px-3 py-2.5 bg-white lg:bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 transition text-sm"
                     placeholder="After meal"
                     value={m.instructions}
                     onChange={(e) => updateMed(i, 'instructions', e.target.value)}
                   />
                 </div>
-                <div className="col-span-1 flex items-center justify-center">
+                <div className="col-span-12 lg:col-span-1 flex justify-end lg:justify-center mt-3 lg:mt-0 pt-3 lg:pt-0 border-t border-slate-200 lg:border-0">
                   <button
                     onClick={() => removeMed(i)}
                     disabled={medicines.length === 1}
-                    className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="text-xs text-red-500 hover:bg-red-50 font-semibold px-3 py-1.5 rounded-md lg:w-9 lg:h-9 lg:p-0 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-4 h-4 lg:w-3.5 lg:h-3.5" />
+                    <span className="lg:hidden ml-1">Remove Medicine</span>
                   </button>
                 </div>
               </div>
@@ -642,9 +648,9 @@ export default function Prescription() {
         </div>
 
         {/* Advice & Follow-up */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5 relative z-10">
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="md:col-span-2">
+        <div className="bg-white rounded-xl border border-slate-200 p-4 lg:p-5 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2">
               <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">
                 Advice
               </label>
@@ -671,16 +677,16 @@ export default function Prescription() {
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3 sticky bottom-4 z-30">
+        <div className="flex flex-col sm:flex-row gap-3 sticky bottom-4 z-30">
           <button
             onClick={() => navigate('/doctor')}
-            className="flex-1 md:flex-none md:w-40 bg-white border border-slate-300 text-slate-700 py-3 rounded-lg font-semibold text-sm hover:bg-slate-50 transition"
+            className="w-full sm:w-40 bg-white border border-slate-300 text-slate-700 py-3 rounded-lg font-semibold text-sm hover:bg-slate-50 transition order-2 sm:order-1"
           >
             Cancel
           </button>
           <button
             onClick={handlePrint}
-            className="flex-1 md:flex-none md:w-40 bg-white border border-slate-300 text-slate-700 py-3 rounded-lg font-semibold text-sm hover:bg-slate-50 transition inline-flex items-center justify-center gap-2"
+            className="w-full sm:w-40 bg-white border border-slate-300 text-slate-700 py-3 rounded-lg font-semibold text-sm hover:bg-slate-50 transition inline-flex items-center justify-center gap-2 order-3 sm:order-2"
           >
             <Printer className="w-4 h-4" />
             Print
@@ -688,7 +694,7 @@ export default function Prescription() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex-1 bg-medical-600 hover:bg-medical-700 text-white py-3 rounded-lg font-semibold text-sm transition-all shadow-sm hover:shadow-md disabled:opacity-50 inline-flex items-center justify-center gap-2"
+            className="w-full sm:flex-1 bg-medical-600 hover:bg-medical-700 text-white py-3 rounded-lg font-semibold text-sm transition-all shadow-sm hover:shadow-md disabled:opacity-50 inline-flex items-center justify-center gap-2 order-1 sm:order-3"
           >
             {saving ? 'Saving...' : (<><Save className="w-4 h-4" />Save Prescription</>)}
           </button>
