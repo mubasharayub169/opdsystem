@@ -55,6 +55,42 @@ router.get('/completed', async (req, res) => {
 });
 
 // ============================================================
+// DAILY REPORT (Date-wise)
+// ============================================================
+router.get('/reports/daily', async (req, res) => {
+  try {
+    const date = req.query.date || new Date().toISOString().slice(0, 10);
+
+    const [visits] = await pool.query(
+      `SELECT v.id, v.token_no, v.mr_no, v.status, 
+              v.visit_date, v.completed_at,
+              p.name AS patient_name, p.age, p.gender, p.phone,
+              pr.diagnosis
+       FROM opd_visits v
+       LEFT JOIN patients p ON p.mr_no = v.mr_no
+       LEFT JOIN prescriptions pr ON pr.visit_id = v.id
+       WHERE v.consultant_id = ? AND DATE(v.visit_date) = ?
+       ORDER BY v.token_no ASC`,
+      [req.user.id, date]
+    );
+
+    const total = visits.length;
+    const completed = visits.filter(v => v.status === 'Completed').length;
+    const waiting = visits.filter(v => v.status === 'Waiting').length;
+    const inConsultation = visits.filter(v => v.status === 'InConsultation').length;
+
+    res.json({
+      ok: true,
+      date,
+      summary: { total, completed, waiting, inConsultation },
+      visits
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ============================================================
 // SEARCH PATIENTS
 // ============================================================
 router.get('/patients/search', async (req, res) => {
@@ -80,7 +116,7 @@ router.get('/patients/search', async (req, res) => {
 });
 
 // ============================================================
-// MEDICINES — Search (autocomplete)
+// MEDICINES — Search
 // ============================================================
 router.get('/medicines/search', async (req, res) => {
   try {
@@ -124,7 +160,7 @@ router.get('/visits/:id', async (req, res) => {
 });
 
 // ============================================================
-// GET PRESCRIPTION BY VISIT ID (for reprinting)
+// GET PRESCRIPTION BY VISIT ID
 // ============================================================
 router.get('/visits/:id/prescription', async (req, res) => {
   try {
@@ -328,7 +364,7 @@ router.post('/prescriptions', async (req, res) => {
 });
 
 // ============================================================
-// TEMPLATES — List
+// TEMPLATES — List, Create, Update, Delete
 // ============================================================
 router.get('/templates', async (req, res) => {
   try {
@@ -353,9 +389,6 @@ router.get('/templates', async (req, res) => {
   }
 });
 
-// ============================================================
-// TEMPLATES — Create
-// ============================================================
 router.post('/templates', async (req, res) => {
   try {
     const { template_name, diagnosis, advice, medicines } = req.body;
@@ -383,9 +416,6 @@ router.post('/templates', async (req, res) => {
   }
 });
 
-// ============================================================
-// TEMPLATES — Update
-// ============================================================
 router.put('/templates/:id', async (req, res) => {
   try {
     const { template_name, diagnosis, advice, medicines } = req.body;
@@ -410,9 +440,6 @@ router.put('/templates/:id', async (req, res) => {
   }
 });
 
-// ============================================================
-// TEMPLATES — Delete
-// ============================================================
 router.delete('/templates/:id', async (req, res) => {
   try {
     await pool.query(

@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
 import {
   Activity, LogOut, Stethoscope, Building2, Calendar,
-  Users, Clock, HelpCircle, FileText, ListChecks,
-  BookOpen
+  Users, HelpCircle, FileText, ListChecks, BookOpen,
+  BarChart3
 } from 'lucide-react';
 
 export default function DoctorLayout({ children, title, subtitle, activeTab, onTabChange, queueCount = 0 }) {
@@ -19,7 +19,8 @@ export default function DoctorLayout({ children, title, subtitle, activeTab, onT
     { key: 'queue', label: 'Patient Queue', icon: Users, badge: queueCount },
     { key: 'templates', label: 'Templates', icon: BookOpen },
     { key: 'completed', label: 'Completed Today', icon: ListChecks },
-    { key: 'history', label: 'Patient History', icon: FileText }
+    { key: 'history', label: 'Patient History', icon: FileText },
+    { key: 'reports', label: 'Daily Reports', icon: BarChart3 } // <-- NAYA
   ];
 
   const today = new Date().toLocaleDateString('en-PK', {

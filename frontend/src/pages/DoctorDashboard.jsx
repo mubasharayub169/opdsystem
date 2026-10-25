@@ -8,7 +8,7 @@ import {
   Clock, RefreshCw, ArrowRight, Stethoscope, ListChecks,
   Search, AlertCircle, X, ChevronDown, ChevronUp,
   FileText, Pill, HeartPulse, Calendar, User,
-  Printer, Loader
+  Printer, Loader, BarChart3
 } from 'lucide-react';
 
 export default function DoctorDashboard() {
@@ -30,6 +30,11 @@ export default function DoctorDashboard() {
   const [patientHistory, setPatientHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [expandedVisit, setExpandedVisit] = useState(null);
+
+  // Daily Report
+  const [reportDate, setReportDate] = useState(new Date().toISOString().slice(0, 10));
+  const [reportData, setReportData] = useState(null);
+  const [reportLoading, setReportLoading] = useState(false);
 
   // ============================================================
   // LOAD QUEUE
@@ -60,6 +65,18 @@ export default function DoctorDashboard() {
     }
   };
 
+  const loadReport = async (date = reportDate) => {
+    try {
+      setReportLoading(true);
+      const { data } = await api.get(`/doctor/reports/daily?date=${date}`);
+      setReportData(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setReportLoading(false);
+    }
+  };
+
   const playBeep = () => {
     try {
       const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQBvT18AAAA=');
@@ -76,6 +93,7 @@ export default function DoctorDashboard() {
 
   useEffect(() => {
     if (tab === 'completed') loadCompleted();
+    if (tab === 'reports') loadReport();
   }, [tab]);
 
   // ============================================================
@@ -165,6 +183,10 @@ export default function DoctorDashboard() {
       case 'history': return {
         title: 'Patient History',
         subtitle: 'Search patients by MR number, name or phone'
+      };
+      case 'reports': return {
+        title: 'Daily Reports',
+        subtitle: 'View patient statistics for any date'
       };
       default: return { title: 'Dashboard', subtitle: '' };
     }
@@ -432,7 +454,6 @@ export default function DoctorDashboard() {
                 ← Back to results
               </button>
 
-              {/* Patient Header */}
               <div className="bg-white rounded-xl p-5 mb-4 border border-slate-200">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-14 h-14 bg-gradient-to-br from-medical-500 to-medical-700 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
@@ -493,7 +514,6 @@ export default function DoctorDashboard() {
                           isExpanded ? 'border-medical-300 shadow-sm' : 'border-slate-200'
                         }`}
                       >
-                        {/* Visit Header */}
                         <button
                           onClick={() => setExpandedVisit(isExpanded ? null : h.id)}
                           className="w-full text-left p-4 hover:bg-slate-50/50 transition"
@@ -537,11 +557,9 @@ export default function DoctorDashboard() {
                           )}
                         </button>
 
-                        {/* Expanded Prescription Details */}
                         {isExpanded && hasPrescription && (
                           <div className="border-t border-slate-100 p-4 space-y-4 bg-slate-50/30">
 
-                            {/* Vitals */}
                             {(h.bp || h.pulse || h.temperature || h.weight || h.spo2) && (
                               <div>
                                 <div className="flex items-center gap-2 mb-2">
@@ -585,7 +603,6 @@ export default function DoctorDashboard() {
                               </div>
                             )}
 
-                            {/* Complaints */}
                             {h.complaints && (
                               <div>
                                 <div className="flex items-center gap-2 mb-2">
@@ -600,7 +617,6 @@ export default function DoctorDashboard() {
                               </div>
                             )}
 
-                            {/* Diagnosis */}
                             {h.diagnosis && (
                               <div>
                                 <div className="flex items-center gap-2 mb-2">
@@ -615,7 +631,6 @@ export default function DoctorDashboard() {
                               </div>
                             )}
 
-                            {/* Medicines */}
                             {h.medicines && h.medicines.length > 0 && (
                               <div>
                                 <div className="flex items-center gap-2 mb-2">
@@ -669,7 +684,6 @@ export default function DoctorDashboard() {
                               </div>
                             )}
 
-                            {/* Advice */}
                             {h.advice && (
                               <div>
                                 <div className="flex items-center gap-2 mb-2">
@@ -684,7 +698,6 @@ export default function DoctorDashboard() {
                               </div>
                             )}
 
-                            {/* Reprint Button */}
                             <div className="flex justify-end pt-3 border-t border-slate-200">
                               <button
                                 onClick={() => handleReprint(h.id)}
@@ -705,7 +718,6 @@ export default function DoctorDashboard() {
                               </button>
                             </div>
 
-                            {/* Follow-up */}
                             {h.follow_up_date && (
                               <div className="flex items-center gap-3 bg-medical-50 border border-medical-200 rounded-lg px-3 py-2.5">
                                 <Calendar className="w-4 h-4 text-medical-600 flex-shrink-0" />
@@ -724,7 +736,6 @@ export default function DoctorDashboard() {
                           </div>
                         )}
 
-                        {/* No Prescription Message */}
                         {isExpanded && !hasPrescription && (
                           <div className="border-t border-slate-100 p-6 text-center bg-slate-50/30">
                             <FileText className="w-8 h-8 mx-auto text-slate-300 mb-2" />
@@ -811,6 +822,118 @@ export default function DoctorDashboard() {
               </p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* ============================================================
+          TAB 4: REPORTS
+      ============================================================ */}
+      {tab === 'reports' && (
+        <div>
+          <div className="bg-white rounded-xl border border-slate-200 p-5 mb-5">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-100">
+              <div>
+                <h3 className="text-base font-bold text-slate-800">Daily Patient Report</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Select a date to view the report</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500"
+                  value={reportDate}
+                  onChange={(e) => {
+                    setReportDate(e.target.value);
+                    loadReport(e.target.value);
+                  }}
+                />
+                <button
+                  onClick={() => loadReport()}
+                  className="bg-medical-600 hover:bg-medical-700 text-white p-2 rounded-lg transition"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {reportLoading ? (
+              <div className="text-center py-8">
+                <Loader className="w-6 h-6 text-medical-600 animate-spin mx-auto" />
+              </div>
+            ) : reportData ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Total Patients</p>
+                  <p className="text-2xl font-bold text-slate-800 font-mono">{reportData.summary.total}</p>
+                </div>
+                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                  <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-1">Completed</p>
+                  <p className="text-2xl font-bold text-emerald-700 font-mono">{reportData.summary.completed}</p>
+                </div>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                  <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-1">Waiting</p>
+                  <p className="text-2xl font-bold text-amber-700 font-mono">{reportData.summary.waiting}</p>
+                </div>
+                <div className="bg-medical-50 border border-medical-200 rounded-lg p-3">
+                  <p className="text-[10px] font-bold text-medical-600 uppercase tracking-wider mb-1">In Consultation</p>
+                  <p className="text-2xl font-bold text-medical-700 font-mono">{reportData.summary.inConsultation}</p>
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          {reportData && reportData.visits.length > 0 ? (
+            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-slate-50 border-b border-slate-200">
+                  <tr>
+                    <th className="text-left px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Token</th>
+                    <th className="text-left px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Patient</th>
+                    <th className="text-left px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">MR No</th>
+                    <th className="text-left px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Diagnosis</th>
+                    <th className="text-left px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                    <th className="text-left px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Time</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {reportData.visits.map((v) => (
+                    <tr key={v.id} className="hover:bg-slate-50/50">
+                      <td className="px-5 py-3">
+                        <span className="inline-flex items-center justify-center w-8 h-8 bg-slate-100 text-slate-700 rounded-full font-bold text-xs">
+                          {v.token_no}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3">
+                        <p className="font-semibold text-slate-800 text-sm">{v.patient_name}</p>
+                        <p className="text-[11px] text-slate-500">{v.age ? `${v.age}Y` : ''} {v.gender}</p>
+                      </td>
+                      <td className="px-5 py-3">
+                        <span className="font-mono text-xs text-slate-600">{v.mr_no}</span>
+                      </td>
+                      <td className="px-5 py-3">
+                        <span className="text-xs text-slate-600 line-clamp-1">{v.diagnosis || '—'}</span>
+                      </td>
+                      <td className="px-5 py-3">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                          v.status === 'Completed' ? 'bg-emerald-50 text-emerald-700' :
+                          v.status === 'Waiting' ? 'bg-amber-50 text-amber-700' :
+                          'bg-medical-50 text-medical-700'
+                        }`}>
+                          {v.status}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3 text-xs text-slate-500">
+                        {v.completed_at ? new Date(v.completed_at).toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' }) : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : reportData ? (
+            <div className="bg-white rounded-xl border border-slate-200 p-12 text-center text-slate-500">
+              No patients found for this date.
+            </div>
+          ) : null}
         </div>
       )}
 
